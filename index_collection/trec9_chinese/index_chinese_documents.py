@@ -8,7 +8,7 @@ import gzip
 import os
 
 # set location of trec9 documents
-datadir="/home/hltcoe/kduh/data/ir/trec/chinese/trec9_packaged/docs/HKCD/"
+datadir="/Users/SamZhang/Documents/RA2017/src/dataset/TREC/trec9_chinese/docs/HKCD/" 
 
 
 def index_document(docno, text):
@@ -34,8 +34,8 @@ def extract_documents(filename):
                     #print str(count),docno,text.encode('utf-8')
                     count +=1
                     index_document(docno, text)
-        except Exception, e:
-            print "Parsing error in %s: %s" % (filename, str(e))
+        except Exception as e:
+            print ("Parsing error in %s: %s" % (filename, str(e)))
             return doc
     return count
 
@@ -49,4 +49,4 @@ for filename in os.listdir(datadir):
     if filename.endswith('gz'):
         count = extract_documents(datadir+'/'+filename)
         totalcount += count
-        print "Indexed %s documents in %s (%d total documents so far)" %(count, filename, totalcount)
+        print ("Indexed %s documents in %s (%d total documents so far)" %(count, filename, totalcount))
