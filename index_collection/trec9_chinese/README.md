@@ -3,7 +3,7 @@
 In this dir, user can use python3 to run TREC_indexing.py and TREC_search.py for indexing and sending query seperately. 
 
 
-#Parameters
+# Parameters
 
 * There is no parameter for TREC_indexing.py.
 
