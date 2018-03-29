@@ -1,1 +1,0 @@
-# TREC-9 Chinese-English CLIR experiment
