@@ -6,7 +6,7 @@ The goal of *elastic4clir* is to provide a flexible framework for running cross-
 
 ## Installation and Setup
 
-It's assumed that you have Anaconda installed. If not, download and setup your conda path like below. It's recommended that you add the conda path to your .bashrc. 
+It's assumed that you have Anaconda installed. If not, download and setup your conda path like below. It's recommended that you add the conda path to your .bashrc (`export PATH=$HOME/miniconda2/bin:$PATH`). 
 
 ```bash
 wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
@@ -40,7 +40,7 @@ Note that all indexed files persist in the ElasticSearch data directory and can 
 
 ## Running Experiments
 
-# Running Experiments using different translation results
+### Running Experiments using different translation results
 
 In the document-translation approach to CLIR, we first translate all the foreign documents in the collection to English. This lets us to run the English queries as if it were monolingual IR. Of course, the IR result will depend on the quality of the translation. This *elastic4clir* package enables the evaluation of various translated results in terms of IR metrics like AQWV.
 
@@ -49,7 +49,7 @@ The process for running such an CLIR experiments is:
 2. Prepare the translations of your test collection, then run the following script with three arguments:
 
 ```bash
-/scripts/quickstir_evaluate.sh datadir1 datadir2 template.cfg
+./scripts/quickstir_evaluate.sh datadir1 datadir2 template.cfg
 ```
 
 where `datadir1` and `datadir2` are the speech and text translations of the test collection in question, and template.cfg is points to the configuration file in the `collection` subdirectory.
@@ -57,18 +57,18 @@ where `datadir1` and `datadir2` are the speech and text translations of the test
 As an example, suppose we are interested in evaluating the results of human translations on the MATERIAL Swahili-English Analysis1 collection, then we would run the following:
 
 ```
-/scripts/quickstir_evaluate.sh /export/corpora5/MATERIAL/IARPA_MATERIAL_BASE-1A/ANALYSIS1/text/translation/ /export/corpora5/MATERIAL/IARPA_MATERIAL_BASE-1A/ANALYSIS1/audio/translation/ collection/material/sw-en/analysis1/template.cfg
+./scripts/quickstir_evaluate.sh /export/corpora5/MATERIAL/IARPA_MATERIAL_BASE-1A/ANALYSIS1/text/translation/ /export/corpora5/MATERIAL/IARPA_MATERIAL_BASE-1A/ANALYSIS1/audio/translation/ collection/material/sw-en/analysis1/template.cfg
 ```
 
-Note that this script is designed to make it easy to run MATERIAL ASR/MT end evaluation with CLIR, so there are always two data directories (one for speech, one for text; the order does not matter). If there is a template.cfg in one of the subdirectories of `collection`, that means it is possible to run `quickstir_evaluate.sh` and get an IR metric like the AQWV score.
+Note that this script is designed to make it easy to run MATERIAL ASR/MT end evaluation with CLIR, so there are always two data directories (one for speech, one for text; the order does not matter). If there is a template.cfg in one of the subdirectories of `collection`, that means it is possible to run `quickstir_evaluate.sh` and get an IR metric like the AQWV score. The script assumes that each of the data directories contains files with the same naming convention as MATERIAL (see e.g. `/export/corpora5/MATERIAL/IARPA_MATERIAL_BASE-1A/ANALYSIS1/text/translation/`). Importantly, each file name is prefixed with `MATERIAL_BASE-$language_$id` and consists of a document. If there are any tab-separated columns in these files, the last one is assumed to be the English translation. 
 
 As a second example, suppose we are interested in evaluating the results of human translations on the MATERIAL Tagalog-English Analysis1 collection, then we would run the following:
 
 ```
-/scripts/quickstir_evaluate.sh /export/corpora5/MATERIAL/IARPA_MATERIAL_BASE-1B/ANALYSIS1/text/translation/ /export/corpora5/MATERIAL/IARPA_MATERIAL_BASE-1B/ANALYSIS1/audio/translation/ collection/material/tl-en/analysis1/template.cfg
+./scripts/quickstir_evaluate.sh /export/corpora5/MATERIAL/IARPA_MATERIAL_BASE-1B/ANALYSIS1/text/translation/ /export/corpora5/MATERIAL/IARPA_MATERIAL_BASE-1B/ANALYSIS1/audio/translation/ collection/material/tl-en/analysis1/template.cfg
 ```
 
-# Running Experiments using different IR configurations
+### Running Experiments using different IR configurations
 
 TODO: This is more advanced usage and will be documented later.
 
