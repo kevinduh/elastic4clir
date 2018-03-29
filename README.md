@@ -4,7 +4,7 @@ An ElasticSearch package for Cross-Lingual Information Retrieval
 The goal of *elastic4clir* is to provide a flexible framework for running cross-lingual information retrieval (CLIR) experiments. It implements various retrieval techniques and benchmarks while using ElasticSearch/Lucene as the backend index and search components.
 
 
-## Installation and Setup
+## Installation
 
 It's assumed that you have Anaconda installed. If not, download and setup your conda path like below. It's recommended that you add the conda path to your .bashrc (`export PATH=$HOME/miniconda2/bin:$PATH`). 
 
@@ -20,6 +20,8 @@ Once you have Anaconda, clone this repo and run the install script, which sets u
 ./scripts/install.sh
 ```
 
+## ElasticSearch Server
+
 This version of elastic4clir is based on ElasticSearch version 5.6.3. To start the ElasticSearch server, run:
 
 ```bash
@@ -32,11 +34,8 @@ To stop the ElasticSearch server, run:
 ./scripts/server.sh stop
 ```
 
-Note that all indexed files persist in the ElasticSearch data directory and can be re-used across server restarts. To remove these indices, run:
+Note that all indexed files persist in the ElasticSearch data directory and can be re-used across server restarts. To remove these indices, run `./scripts/server.sh clean`. To check the status of the server/indices, run `./scripts/server.sh status`.
 
-```bash
-./scripts/server.sh clean
-```
 
 ## Running Experiments
 
@@ -67,6 +66,21 @@ As a second example, suppose we are interested in evaluating the results of huma
 ```
 ./scripts/quickstir_evaluate.sh /export/corpora5/MATERIAL/IARPA_MATERIAL_BASE-1B/ANALYSIS1/text/translation/ /export/corpora5/MATERIAL/IARPA_MATERIAL_BASE-1B/ANALYSIS1/audio/translation/ collection/material/tl-en/analysis1/template.cfg
 ```
+
+3. The above script will generate temporary output directories (`tmp.$random_number`). These can be safely deleted anytime. The `search_output.txt` file in the temporary output directory records the retrieved results of the IR run, in TREC-Eval format. This can be used if further analysis of retrieved results is needed.
+
+4. Multiple runs with different datadir can be made while the ElasticSearch server is up. Once done, stop the server with `./scripts/server.sh stop`.
+
+A note on the AQWV results: the Swahili-English Analysis1 human reference translations should give the following AQWV results:
+
+```
+Oracle QWV: 0.3492
+AQWV for max_hits=5: 0.2618
+#queries evaluated: 150
+```
+
+The Actual Query Weighted Value, evaluated at maximum 5 hits per query, is 0.2618. Since there is a threshold that needs to be tuned, for machine translation evaluation it is better to look at the Oracle Query Weighted Value (0.3492), which finds the optimal threshold (max_hits) on a per-query basis.
+
 
 ### Running Experiments using different IR configurations
 
