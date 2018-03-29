@@ -81,6 +81,13 @@ AQWV for max_hits=15: 0.1492
 
 The Actual Query Weighted Value, evaluated at maximum 15 hits per query, is 0.1492. Since there is a threshold that needs to be tuned, for machine translation evaluation it is better to compare results on the Oracle Query Weighted Value (0.3879), which finds the optimal threshold (max_hits) on a per-query basis.
 
+The Tagalog-English Analysis1 human reference results are:
+
+```
+Oracle QWV:  0.6287
+AQWV for max_hits=15: 0.3335
+#queries evaluated:  125
+```
 
 ### Running Experiments using different IR configurations
 
