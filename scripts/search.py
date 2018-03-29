@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from elasticsearch import Elasticsearch
 import itertools
 import codecs
