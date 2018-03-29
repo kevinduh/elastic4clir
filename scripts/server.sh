@@ -3,7 +3,7 @@
 # Convenience script for managing ElasticSearch server
 
 if [ $# -ne 1 ]; then
-    echo "Usage: server.sh command={start,stop,clean,status}"
+    echo "Usage: server.sh command={start,stop,status}"
     echo "  start: start the ElasticSearch server"
     echo "  stop:  stop the ElasticSearch server"
     echo "  status: show status of ElasticSearch server"
@@ -34,5 +34,5 @@ elif [ $1 == 'status' ]; then
     
 else
     echo "Command unknown."
-    echo "Usage: server.sh command={start,stop,clean,status}"
+    echo "Usage: server.sh command={start,stop,status}"
 fi
