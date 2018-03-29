@@ -1,0 +1,4 @@
+- change reference file format from TREC back to MATERIAL
+- add DEV collections
+- collect results for various MT runs
+- work on different IR configurations
