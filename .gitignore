@@ -1,0 +1,11 @@
+# python
+__pycache__/
+
+# elasticsearch distribution
+elasticsearch-*/
+
+# temporary folders
+tmp.*/
+
+# misc
+*~
