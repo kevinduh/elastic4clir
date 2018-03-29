@@ -28,13 +28,13 @@ This version of elastic4clir is based on ElasticSearch version 5.6.3. To start t
 ./scripts/server.sh start
 ```
 
-To stop the ElasticSearch server, run:
+To stop the ElasticSearch server (and delete the indices), run:
 
 ```bash
 ./scripts/server.sh stop
 ```
 
-Note that all indexed files persist in the ElasticSearch data directory and can be re-used across server restarts. To remove these indices, run `./scripts/server.sh clean`. To check the status of the server/indices, run `./scripts/server.sh status`.
+To check the status of the server/indices, run `./scripts/server.sh status`.
 
 
 ## Running Experiments
