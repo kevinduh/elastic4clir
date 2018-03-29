@@ -15,7 +15,7 @@ datadir1=$1
 datadir2=$2
 template=$3
 
-source activate clir
+source activate elastic4clir
 scriptdir=$(cd `dirname $0` && pwd)
 outputdir=tmp.$RANDOM
 

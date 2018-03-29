@@ -6,8 +6,8 @@ rootdir=$(cd `dirname $0/`/.. && pwd)
 cd $rootdir
 
 # 1. create conda environment
-echo "1. Creating conda environment: clir"
-conda env create -f conda-clir-env.yml
+echo "1. Creating conda environment: elastic4clir"
+conda env create -f conda-elastic4clir-env.yml
 
 # 2. download ElasticSearch
 version=5.6.3
