@@ -51,7 +51,7 @@ The process for running such an CLIR experiments is:
 ./scripts/quickstir_evaluate.sh datadir1 datadir2 template.cfg
 ```
 
-where `datadir1` and `datadir2` are the speech and text translations of the test collection in question, and template.cfg is points to the configuration file in the `collection` subdirectory.
+where `datadir1` and `datadir2` are the speech and text translations of the test collection in question, and template.cfg points to the configuration file in the `collection` subdirectory.
 
 As an example, suppose we are interested in evaluating the results of human translations on the MATERIAL Swahili-English Analysis1 collection, then we would run the following:
 
@@ -59,7 +59,7 @@ As an example, suppose we are interested in evaluating the results of human tran
 ./scripts/quickstir_evaluate.sh /export/corpora5/MATERIAL/IARPA_MATERIAL_BASE-1A/ANALYSIS1/text/translation/ /export/corpora5/MATERIAL/IARPA_MATERIAL_BASE-1A/ANALYSIS1/audio/translation/ collection/material/sw-en/analysis1/template.cfg
 ```
 
-Note that this script is designed to make it easy to run MATERIAL ASR/MT end evaluation with CLIR, so there are always two data directories (one for speech, one for text; the order does not matter). If there is a template.cfg in one of the subdirectories of `collection`, that means it is possible to run `quickstir_evaluate.sh` and get an IR metric like the AQWV score. The script assumes that each of the data directories contains files with the same naming convention as MATERIAL (see e.g. `/export/corpora5/MATERIAL/IARPA_MATERIAL_BASE-1A/ANALYSIS1/text/translation/`). Importantly, each file name is prefixed with `MATERIAL_BASE-$language_$id` and consists of a document. If there are any tab-separated columns in these files, the last one is assumed to be the English translation. 
+Note that this script is designed to make it easy to run MATERIAL ASR/MT end evaluation with CLIR, so there are always two data directories (one for speech, one for text; the order does not matter). If there is a template.cfg in one of the subdirectories of `collection`, that means it is possible to run `quickstir_evaluate.sh` and get an IR metric like the AQWV score. The script assumes that each of the data directories contains files with the same naming convention as the MATERIAL data packs (see e.g. `/export/corpora5/MATERIAL/IARPA_MATERIAL_BASE-1A/ANALYSIS1/text/translation/`). Importantly, each file name is prefixed with `MATERIAL_BASE-$language_$id` and consists of a document. If there are any tab-separated columns in these files, the last one is assumed to be the English translation. 
 
 As a second example, suppose we are interested in evaluating the results of human translations on the MATERIAL Tagalog-English Analysis1 collection, then we would run the following:
 
@@ -74,12 +74,12 @@ As a second example, suppose we are interested in evaluating the results of huma
 A note on the AQWV results: the Swahili-English Analysis1 human reference translations should give the following AQWV results:
 
 ```
-Oracle QWV: 0.3492
-AQWV for max_hits=5: 0.2618
+Oracle QWV: 0.3879
+AQWV for max_hits=15: 0.1492
 #queries evaluated: 150
 ```
 
-The Actual Query Weighted Value, evaluated at maximum 5 hits per query, is 0.2618. Since there is a threshold that needs to be tuned, for machine translation evaluation it is better to look at the Oracle Query Weighted Value (0.3492), which finds the optimal threshold (max_hits) on a per-query basis.
+The Actual Query Weighted Value, evaluated at maximum 15 hits per query, is 0.1492. Since there is a threshold that needs to be tuned, for machine translation evaluation it is better to compare results on the Oracle Query Weighted Value (0.3879), which finds the optimal threshold (max_hits) on a per-query basis.
 
 
 ### Running Experiments using different IR configurations
