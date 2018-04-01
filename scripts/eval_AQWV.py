@@ -368,9 +368,17 @@ def eval_AQWV(query_file, reference_file, output_path, search, es_index, system_
 
 
     f_out.close()
-    compute_AQWV(reference_file, SEARCH_OUT, N_total, max_hits)
-    
-    if run_official_AQWV:
+
+    # special condition: if reference_file is the string 'NO_REFERENCE', don't run anything else.
+    if reference_file != 'NO_REFERENCE':
+        compute_AQWV(reference_file, SEARCH_OUT, N_total, max_hits)
+    else:
+        print("NO_REFERENCE is specified. Packaging results to be run on NIST server here...")
+        tar_command = "cd %s; tar -czvf ../%s-%s.tgz *.tsv" % (SYSTEM_OUT_FILES, es_index, system_id)
+        subprocess.call(tar_command, shell=True, stdout=subprocess.DEVNULL)       
+        print("%s/%s-%s.tgz" %(output_path, es_index, system_id))
+        
+    if (run_official_AQWV and (reference_file != 'NO_REFERENCE')):
         #Create <answerkeyfile> , default setting task to CLIR
         create_DocumentList(output_path, dataset_name, es_index)
         dataset_name += '_CLIR_'
