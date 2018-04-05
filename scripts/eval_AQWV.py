@@ -315,10 +315,10 @@ def compute_AQWV_official(base_out_folder, dataset_name, ref_file, queries):
     if verbose >= 1:
         print ('Calculating Official AQWV score ..')
 
-    fin_score_command = material_scorer + ' -m ' + score_out_folder + ' -w ' + os.path.join(base_out_folder, 'FinalAWQVscore.txt')
+    fin_score_command = material_scorer + ' -m ' + score_out_folder + ' -w ' + os.path.join(base_out_folder, 'FinalAQWVscore.txt')
     subprocess.call(fin_score_command, shell=True)
-    print ('Official AQWV score at ' + os.path.join(base_out_folder, 'FinalAWQVscore.txt') )
-    subprocess.call(['cat',os.path.join(base_out_folder, 'FinalAWQVscore.txt')])
+    print ('Official AQWV score at ' + os.path.join(base_out_folder, 'FinalAQWVscore.txt') )
+    subprocess.call(['cat',os.path.join(base_out_folder, 'FinalAQWVscore.txt')])
 
 
     #Generate fine-grained AQWV score report
