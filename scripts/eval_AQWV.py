@@ -14,7 +14,8 @@ from elasticsearch import Elasticsearch
 import math
 
 #Hardcoding the path to official implementation of material scoring. Need to change in later
-MATERIAL_EVAL_PATH = '/export/a10/CLIR/tmp/MATERIAL_tools-0.4.2'
+#MATERIAL_EVAL_PATH = '/export/a10/CLIR/tmp/MATERIAL_tools-0.4.2'
+MATERIAL_EVAL_PATH = '/export/corpora5/MATERIAL/tools/MATERIAL_tools-0.5.1/'
 
 #Hardcoding the conversation of domain names needed for the official NIST script
 #Given a query file, it maps the query number to the query
@@ -269,7 +270,7 @@ def compute_AQWV_official(base_out_folder, dataset_name, ref_file, queries):
                 ref_out[q_id].add(doc_id)
     
     for qry in ref_out:
-        with open(os.path.join(out_folder, dataset_name + 'q-' + qry + '.tsv'), 'w') as f_qry:
+        with open(os.path.join(out_folder, dataset_name + '_CLIR_' + 'q-' + qry + '.tsv'), 'w') as f_qry:
             f_qry.write(qry + '\t' + queries[qry]['original'] + '\n')
             for rel_docs in ref_out[qry]:
                 f_qry.write(rel_docs + '\n')
@@ -284,7 +285,7 @@ def compute_AQWV_official(base_out_folder, dataset_name, ref_file, queries):
     if not os.path.exists(score_out_folder):
         os.mkdir(score_out_folder)
     
-    path_to_doc_file = os.path.join(base_out_folder, dataset_name + 'AllDocIDs.tsv')
+    path_to_doc_file = os.path.join(base_out_folder, dataset_name + '_CLIR_AllDocIDs.tsv')
     path_to_query_files = os.path.join(base_out_folder, 'SystemOutputFiles')
     path_to_ref_files = os.path.join(base_out_folder, 'Reference')
     material_validator = os.path.join(MATERIAL_EVAL_PATH, 'material_validator.py')
@@ -299,7 +300,7 @@ def compute_AQWV_official(base_out_folder, dataset_name, ref_file, queries):
     for qry in ref_out:
         if qry in queries:
             qry_file = os.path.join(path_to_query_files, 'q-' + qry + '.tsv')
-            ref_file = os.path.join(path_to_ref_files, dataset_name + 'q-' + qry + '.tsv')
+            ref_file = os.path.join(path_to_ref_files, dataset_name + '_CLIR_' + 'q-' + qry + '.tsv')
             gen_file = os.path.join(gen_out_folder, 'q-' + qry + '.ScoringReady.tsv')
             score_file = os.path.join(score_out_folder, 'q-' + qry + '.AQWVscores.tsv')
 
@@ -318,6 +319,20 @@ def compute_AQWV_official(base_out_folder, dataset_name, ref_file, queries):
     subprocess.call(fin_score_command, shell=True)
     print ('Official AQWV score at ' + os.path.join(base_out_folder, 'FinalAWQVscore.txt') )
     subprocess.call(['cat',os.path.join(base_out_folder, 'FinalAWQVscore.txt')])
+
+
+    #Generate fine-grained AQWV score report
+    if verbose >= 1:
+        print('Calculating fine-grained AQWV score report (this may take a while)...')
+
+    material_filter = os.path.join(MATERIAL_EVAL_PATH, 'material_filter.py')
+    scoring_output = os.path.join(base_out_folder, 'AQWVreports')
+    tmp_out = scoring_output + '-tmp'
+    language_code = dataset_name.split('-')[1] # this is hardcoded, e.g. 1A
+    nist_file_mapping = MATERIAL_EVAL_PATH + '/data/filteringFiles/' + language_code + '_mapping_genre_docid.tsv' # this is hardcoded and dependent on NIST tool setup
+    filter_command = material_filter + ' --sysout_dir ' + path_to_query_files + ' --dataset_docids ' + path_to_doc_file + ' --ref_dir ' + path_to_ref_files + ' --perf_period ' + dataset_name + ' --material_tools ' + MATERIAL_EVAL_PATH + ' --tmp_out ' + tmp_out + ' --scoring_output ' + scoring_output + ' --nist_file_mapping ' + nist_file_mapping
+    subprocess.call(filter_command, shell=True, stderr=subprocess.DEVNULL)
+
 
 
 def eval_AQWV(query_file, reference_file, output_path, search, es_index, system_id, dataset_name, max_hits, run_official_AQWV, verbose):
@@ -381,7 +396,6 @@ def eval_AQWV(query_file, reference_file, output_path, search, es_index, system_
     if (run_official_AQWV and (reference_file != 'NO_REFERENCE')):
         #Create <answerkeyfile> , default setting task to CLIR
         create_DocumentList(output_path, dataset_name, es_index)
-        dataset_name += '_CLIR_'
         compute_AQWV_official(output_path, dataset_name, reference_file, queries)
     
         
