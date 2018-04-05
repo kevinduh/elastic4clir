@@ -84,8 +84,8 @@ The Actual Query Weighted Value, evaluated at maximum 15 hits per query, is 0.14
 The Tagalog-English Analysis1 human reference results are:
 
 ```
-Oracle QWV:  0.6297
-AQWV for max_hits=15: 0.3366
+Oracle QWV:  0.6304
+AQWV for max_hits=15: 0.3352
 #queries evaluated:  125
 ```
 

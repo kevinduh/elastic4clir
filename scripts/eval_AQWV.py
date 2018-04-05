@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 import json
 import importlib
 from configparser import SafeConfigParser
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 from elasticsearch import Elasticsearch
 import math
 
@@ -114,23 +114,21 @@ def best_score_per_qry(ref_out, search_out, beta, max_hits, N_total, out_path):
     return cur_AQWV
 
 
-
+def get_reference(ref_file):
+    ref_out = defaultdict(set)
+    with open(ref_file, 'r') as f_ref:
+        f_ref.readline()
+        for cur_line in f_ref:
+            q_id, doc_id = cur_line.split()
+            ref_out[q_id].add(doc_id)
+    return ref_out
+            
 #Implements the AQWV metric
 def compute_AQWV(ref_file, out_file, N_total, max_hits):
-    
+
     #Populate the reference outputs
-    ref_out = {}
-    with open(ref_file, 'r') as f_ref:
-        for cur_line in f_ref:
-            toks = cur_line.strip().split()
-            assert len(toks) == 4
-            
-            q_id = toks[0]; doc_id = toks[2]; rel = int(toks[3]);
-            if rel > 0:
-                if q_id not in ref_out:
-                    ref_out[q_id] = set()
-                ref_out[q_id].add(doc_id)
-    
+    ref_out = get_reference(ref_file)
+
     #Populate the search_output
     search_out = {}
     with open(out_file, 'r') as f_out:
@@ -259,17 +257,7 @@ def compute_AQWV_official(base_out_folder, dataset_name, ref_file, queries):
     if not os.path.exists(out_folder):
         os.mkdir(out_folder)
     
-    ref_out = {}
-    with open(ref_file, 'r') as f_ref:
-        for cur_line in f_ref:
-            toks = cur_line.strip().split()
-            assert len(toks) == 4
-            
-            q_id = toks[0]; doc_id = toks[2]; rel = int(toks[3])
-            if rel > 0:
-                if q_id not in ref_out:
-                    ref_out[q_id] = set()
-                ref_out[q_id].add(doc_id)
+    ref_out = get_reference(ref_file)
     
     for qry in ref_out:
         with open(os.path.join(out_folder, dataset_name + '_CLIR_' + 'q-' + qry + '.tsv'), 'w') as f_qry:
