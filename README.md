@@ -67,7 +67,7 @@ As a second example, suppose we are interested in evaluating the results of huma
 ./scripts/quickstir_evaluate.sh /export/corpora5/MATERIAL/IARPA_MATERIAL_BASE-1B/ANALYSIS1/text/translation/ /export/corpora5/MATERIAL/IARPA_MATERIAL_BASE-1B/ANALYSIS1/audio/translation/ collection/material/tl-en/analysis1/template.cfg
 ```
 
-3. The above script will generate temporary output directories (`tmp.$random_number`). These can be safely deleted anytime. The `search_output.txt` file in the temporary output directory records the retrieved results of the IR run, in TREC-Eval format. This can be used if further analysis of retrieved results is needed.
+3. The above script will generate temporary output directories (`tmp.$random_number`). These can be safely deleted anytime. The `search_output.txt` file in the temporary output directory records the retrieved results of the IR run, in TREC-Eval format. The `nohit_queries.txt` file shows the queries (in the parsed form given to ElasticSearch) that do not return any document hits (i.e. OOVs). These can be used if further analysis of retrieved results is needed.
 
 4. Multiple runs with different datadir can be made while the ElasticSearch server is up. Once done, stop the server with `./scripts/server.sh stop`.
 

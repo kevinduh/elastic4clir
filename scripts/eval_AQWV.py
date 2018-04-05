@@ -344,6 +344,10 @@ def eval_AQWV(query_file, reference_file, output_path, search, es_index, system_
     SEARCH_OUT = os.path.join(output_path, "search_output.txt")
     f_out = open(SEARCH_OUT,'w')
 
+    #File to record queries with no hits
+    NOHIT_OUT = os.path.join(output_path, "nohit_queries.txt")
+    f_nohit = open(NOHIT_OUT,'w')
+
     if run_official_AQWV:
         #File to store <SystemOutputFiles> of every query
         SYSTEM_OUT_FILES = os.path.join(output_path, "SystemOutputFiles")
@@ -368,6 +372,7 @@ def eval_AQWV(query_file, reference_file, output_path, search, es_index, system_
         res = search(es_index, system_id, q_string, max_hits)
         if int(res['hits']['total']) == 0:
             f_out.write(str(q_num) + " " + "1 NO_HIT -1 1.0 STANDARD\n")
+            f_nohit.write(str(q_num) + '\t' + queries[q_num]['parsed'] + '\n')
         else:
             normalize_scores(res)
             for each_doc in res['hits']['hits']:
@@ -383,7 +388,8 @@ def eval_AQWV(query_file, reference_file, output_path, search, es_index, system_
 
 
     f_out.close()
-
+    f_nohit.close()
+    
     # special condition: if reference_file is the string 'NO_REFERENCE', don't run anything else.
     if reference_file != 'NO_REFERENCE':
         compute_AQWV(reference_file, SEARCH_OUT, N_total, max_hits)
