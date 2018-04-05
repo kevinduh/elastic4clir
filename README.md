@@ -74,8 +74,8 @@ As a second example, suppose we are interested in evaluating the results of huma
 A note on the AQWV results: the Swahili-English Analysis1 human reference translations should give the following AQWV results:
 
 ```
-Oracle QWV: 0.3879
-AQWV for max_hits=15: 0.1492
+Oracle QWV: 0.3908
+AQWV for max_hits=15: 0.1526
 #queries evaluated: 150
 ```
 
@@ -84,8 +84,8 @@ The Actual Query Weighted Value, evaluated at maximum 15 hits per query, is 0.14
 The Tagalog-English Analysis1 human reference results are:
 
 ```
-Oracle QWV:  0.6287
-AQWV for max_hits=15: 0.3335
+Oracle QWV:  0.6297
+AQWV for max_hits=15: 0.3366
 #queries evaluated:  125
 ```
 
