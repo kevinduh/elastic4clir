@@ -141,7 +141,8 @@ def compute_AQWV(ref_file, out_file, N_total, max_hits):
             q_id = toks[0]; doc_id = toks[2]; sim = float(toks[4]);
             if q_id not in search_out:
                 search_out[q_id] = OrderedDict()
-            search_out[q_id][doc_id] = sim
+            if doc_id != 'NO_HIT':
+                search_out[q_id][doc_id] = sim
         
         #For each query , sort the documents acc. to  similarity
         for q in search_out:
@@ -185,7 +186,8 @@ def compute_AQWV(ref_file, out_file, N_total, max_hits):
             
             total_score += scores[qry]
             total_count +=1
-
+            #print("%s N_miss:%d N_FA:%d N_relevant:%d P_miss:%f P_FA:%f QWV:%f" %(qry,N_miss,N_FA,N_relevant,P_miss,P_FA,scores[qry]))
+            
     cur_AQWV = total_score/total_count
     print("AQWV for max_hits=%d: \t %.4f" %(max_hits, cur_AQWV))
     print("#queries evaluated:   \t %d" %total_count)
