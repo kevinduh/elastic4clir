@@ -13,19 +13,17 @@ from collections import OrderedDict, defaultdict
 from elasticsearch import Elasticsearch
 import math
 
-#Hardcoding the path to official implementation of material scoring. Need to change in later
-#MATERIAL_EVAL_PATH = '/export/a10/CLIR/tmp/MATERIAL_tools-0.4.2'
+#Hardcoding the path to official implementation of material scoring. 
 MATERIAL_EVAL_PATH = '/export/corpora5/MATERIAL/tools/MATERIAL_tools-0.5.1/'
 
-#Hardcoding the conversation of domain names needed for the official NIST script
-#Given a query file, it maps the query number to the query
+#Hardcoding the conversion of domain names needed for the official NIST script
 domain_id2name = {
     'GOV':'Government-And-Politics',
     'LIF':'Lifestyle'
 }
 
 #Checks all possible max_hits and finds the best AQWV overall
-def best_score(ref_out, search_out, beta, max_hits, N_total, out_path):
+def best_score_overall(ref_out, search_out, beta, max_hits, N_total, out_path):
     #Upper bound max_hits to num docs  indexed
     max_hits = min(max_hits, N_total)
     
@@ -156,7 +154,7 @@ def compute_AQWV(ref_file, out_file, N_total, max_hits):
     beta = 20.0
     theta = 0.0
     
-    #score, hits = best_score(ref_out, search_out, beta, max_hits, N_total, os.path.split(out_file)[0])
+    #score, hits = best_score_overall(ref_out, search_out, beta, max_hits, N_total, os.path.split(out_file)[0])
     score = best_score_per_qry(ref_out, search_out, beta, max_hits, N_total, os.path.split(out_file)[0])
     print("Oracle QWV:          \t %.4f" %score)
 
@@ -165,9 +163,10 @@ def compute_AQWV(ref_file, out_file, N_total, max_hits):
     total_score = 0.0
     total_count = 0
     
-    # IMP : For queries not present in both search_out and ref_out, AQWV is not computed
     for qry in search_out:
         if qry not in ref_out:
+            # For queries not present in the reference, AQWV is not computed.
+            # This corresponds to all-filt AQWV in the official script
             continue 
         else:
             ref_docs = ref_out[qry]
@@ -253,17 +252,8 @@ def compute_AQWV_official(base_out_folder, dataset_name, ref_file, queries):
 
     #Create a sub-directory for Reference
     out_folder = os.path.join(base_out_folder, 'Reference')
-    
     if not os.path.exists(out_folder):
         os.mkdir(out_folder)
-    
-    ref_out = get_reference(ref_file)
-    
-    for qry in ref_out:
-        with open(os.path.join(out_folder, dataset_name + '_CLIR_' + 'q-' + qry + '.tsv'), 'w') as f_qry:
-            f_qry.write(qry + '\t' + queries[qry]['original'] + '\n')
-            for rel_docs in ref_out[qry]:
-                f_qry.write(rel_docs + '\n')
     
     #Create subdirectory for generatedinputfiles
     gen_out_folder = os.path.join(base_out_folder, 'GeneratedInputFiles')
@@ -281,25 +271,30 @@ def compute_AQWV_official(base_out_folder, dataset_name, ref_file, queries):
     material_validator = os.path.join(MATERIAL_EVAL_PATH, 'material_validator.py')
     material_scorer = os.path.join(MATERIAL_EVAL_PATH, 'material_scorer.py')
 
+    # get reference as dictionary of query -> relevant doc_id
+    ref_out = get_reference(ref_file)    
+
     if verbose >= 1:
         print ('Calling Material Validator to create <GeneratedInputFiles>...')
         print ('Calling Material scorer to create QWV score for each query...')
 
     #Generate generatedinputfiles for each query in ref_out and in search out
-    #Default condition is query must be present in both ref and search
-    for qry in ref_out:
-        if qry in queries:
-            qry_file = os.path.join(path_to_query_files, 'q-' + qry + '.tsv')
-            ref_file = os.path.join(path_to_ref_files, dataset_name + '_CLIR_' + 'q-' + qry + '.tsv')
-            gen_file = os.path.join(gen_out_folder, 'q-' + qry + '.ScoringReady.tsv')
-            score_file = os.path.join(score_out_folder, 'q-' + qry + '.AQWVscores.tsv')
+    for qry in queries:
+        ref_file = os.path.join(path_to_ref_files, dataset_name + '_CLIR_' + 'q-' + qry + '.tsv')
+        with open(ref_file, 'w') as f_qry:
+            f_qry.write(qry + '\t' + queries[qry]['original'] + '\n')
+            if qry in ref_out:
+                for rel_docs in ref_out[qry]:
+                    f_qry.write(rel_docs + '\n')
 
-            val_command = material_validator + ' -s ' + qry_file + ' -d ' + path_to_doc_file + ' -r ' + ref_file + ' -g ' + gen_file
-            
-            #Add beta for customization
-            score_command = material_scorer + ' -g ' + gen_file + ' -w ' + score_file            
-            subprocess.call(val_command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)     
-            subprocess.call(score_command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        qry_file = os.path.join(path_to_query_files, 'q-' + qry + '.tsv')        
+        gen_file = os.path.join(gen_out_folder, 'q-' + qry + '.ScoringReady.tsv')
+        score_file = os.path.join(score_out_folder, 'q-' + qry + '.AQWVscores.tsv')
+        val_command = material_validator + ' -s ' + qry_file + ' -d ' + path_to_doc_file + ' -r ' + ref_file + ' -g ' + gen_file
+        #Add beta for customization
+        score_command = material_scorer + ' -g ' + gen_file + ' -w ' + score_file            
+        subprocess.call(val_command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)     
+        subprocess.call(score_command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     
     #Generate final AQWV score
     if verbose >= 1:
