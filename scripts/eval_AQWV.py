@@ -81,7 +81,9 @@ def best_score_per_qry(ref_out, search_out, beta, max_hits, N_total, out_path):
     scores = {}
     total_score = 0.0
     total_count = 0
-            
+
+    oracle_fid = open(os.path.join(out_path, "oracle_qwv.txt"), 'w')
+    oracle_fid.write("# query optimal_max_hit oracle AQWV / (ES scores)\n")
     # IMP : For queries not present in both search_out and ref_out, AQWV is not computed
     for qry in search_out:
         if qry not in ref_out:
@@ -103,12 +105,17 @@ def best_score_per_qry(ref_out, search_out, beta, max_hits, N_total, out_path):
                 scores[qry] = 1.0 - (P_miss + beta * P_FA)
                 if scores[qry] > best_AQWV:
                     best_AQWV = scores[qry]
+                    optimal_max_hits = cur_hits
                 
             total_score += best_AQWV
             total_count +=1
-    
+            oracle_fid.write("%s \t %d/%d \t %.2f \t %.2f\n\t"%(qry, optimal_max_hits, len(search_docs), best_AQWV, scores[qry]))
+            for s in search_out[qry].values():
+                oracle_fid.write("%.3f "%s)
+            oracle_fid.write("\n")
+            
     cur_AQWV = total_score/total_count
-        
+    oracle_fid.close()
     return cur_AQWV
 
 
