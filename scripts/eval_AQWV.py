@@ -14,7 +14,7 @@ from elasticsearch import Elasticsearch
 import math
 
 #Hardcoding the path to official implementation of material scoring. 
-MATERIAL_EVAL_PATH = '/export/corpora5/MATERIAL/tools/MATERIAL_tools-0.5.1/'
+MATERIAL_EVAL_PATH = '/export/corpora5/MATERIAL/tools/MATERIAL_tools-0.5.2/'
 
 #Hardcoding the conversion of domain names needed for the official NIST script
 domain_id2name = {
