@@ -59,10 +59,11 @@ mapping = '''{
   "properties": {
     \"%s\": {
       "type": "text",
-      "analyzer": \"%s\"
+      "analyzer": \"%s\",
+      "search_analyzer": \"%s\"
     }
   }
-}'''%(newField, analyzer)
+}'''%(newField, analyzer, analyzer)
 
 es.indices.put_mapping(index = docIndex, doc_type = docType, body = mapping)
 
