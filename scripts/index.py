@@ -19,8 +19,7 @@ datadirs = [x.strip() for x in config['Indexer']['datadir'].split(',')]
 docIndex = config['Indexer']['index'].strip()
 docType = 'doc'
 newField = config['Indexer']['system_id'].strip()
-index_analyzer = config['Indexer']['analyzer'].strip()
-search_analyzer = config['Indexer']['search_analyzer'].strip()
+analyzer = config['Indexer']['analyzer'].strip()
 verbose = int(config['Indexer']['verbose'].strip())
 
 def index_document(es, doc_id, doc_text):
@@ -56,11 +55,10 @@ mapping = '''{
   "properties": {
     \"%s\": {
       "type": "text",
-      "analyzer": \"%s\",
-      "search_analyzer": \"%s\"
+      "analyzer": \"%s\"
     }
   }
-}'''%(newField, index_analyzer, search_analyzer)
+}'''%(newField, analyzer)
 
 es.indices.put_mapping(index = docIndex, doc_type = docType, body = mapping)
 

@@ -21,8 +21,7 @@ datadirs = [x.strip() for x in config['Indexer']['datadir'].split(',')]
 docIndex = config['Indexer']['index'].strip()
 docType = 'doc'
 newField = 'qrel'
-index_analyzer = 'standard'
-search_analyzer = 'standard'
+analyzer = 'whitespace'
 reference_file = config['Evaluation']['reference_file']
 verbose = int(config['Indexer']['verbose'].strip())
 
@@ -60,11 +59,10 @@ mapping = '''{
   "properties": {
     \"%s\": {
       "type": "text",
-      "analyzer": \"%s\",
-      "search_analyzer": \"%s\"
+      "analyzer": \"%s\"
     }
   }
-}'''%(newField, index_analyzer, search_analyzer)
+}'''%(newField, analyzer)
 
 es.indices.put_mapping(index = docIndex, doc_type = docType, body = mapping)
 
