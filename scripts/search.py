@@ -25,14 +25,16 @@ def search(index_name, fieldName, keyWord, num_results=5):
     queryField = "\",\"".join(fieldArr)
 
     queryStr = '''{
-        "size" : %s,
+        "size" : %d,
         "query": {
             "query_string" : {
                 "fields" : [\"%s\"],
                 "query" : \"%s\"
             }
-        }
-    }'''%(str(num_results), queryField, keyWord)
+        },
+        "_source" : [\"%s\"],
+        "explain" : true
+    }'''%(num_results, queryField, keyWord, queryField)
 
     response = es.search(index=index_name, body = queryStr)
 

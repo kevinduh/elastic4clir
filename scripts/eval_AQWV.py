@@ -115,6 +115,7 @@ def best_score_per_qry(ref_out, search_out, beta, max_hits, N_total, out_path):
             oracle_fid.write("\n")
             
     cur_AQWV = total_score/total_count
+    oracle_fid.write("# Oracle QWV for max_hits=%d: %.4f\n" %(max_hits, cur_AQWV))
     oracle_fid.close()
     return cur_AQWV
 
@@ -282,8 +283,7 @@ def compute_AQWV_official(base_out_folder, dataset_name, ref_file, queries):
     ref_out = get_reference(ref_file)    
 
     if verbose >= 1:
-        print ('Calling Material Validator to create <GeneratedInputFiles>...')
-        print ('Calling Material scorer to create QWV score for each query...')
+        print ('Calling Material Validator to create <GeneratedInputFiles> and Scorer to create <QueryScores>')
 
     #Generate generatedinputfiles for each query in ref_out and in search out
     for qry in queries:
@@ -323,8 +323,10 @@ def compute_AQWV_official(base_out_folder, dataset_name, ref_file, queries):
     language_code = dataset_name.split('-')[1] # this is hardcoded, e.g. 1A
     nist_file_mapping = MATERIAL_EVAL_PATH + '/data/filteringFiles/' + language_code + '_mapping_genre_docid.tsv' # this is hardcoded and dependent on NIST tool setup
     filter_command = material_filter + ' --sysout_dir ' + path_to_query_files + ' --dataset_docids ' + path_to_doc_file + ' --ref_dir ' + path_to_ref_files + ' --perf_period ' + dataset_name + ' --material_tools ' + MATERIAL_EVAL_PATH + ' --tmp_out ' + tmp_out + ' --scoring_output ' + scoring_output + ' --nist_file_mapping ' + nist_file_mapping
-    subprocess.call(filter_command, shell=True, stderr=subprocess.DEVNULL)
-
+    fid_out = open(os.path.join(base_out_folder, 'AQWVreports.txt'), 'w')
+    subprocess.call(filter_command, shell=True, stdout=fid_out, stderr=subprocess.DEVNULL)
+    fid_out.close()
+    subprocess.call(['tail','-3', os.path.join(base_out_folder, 'AQWVreports.txt')])
 
 
 def eval_AQWV(query_file, reference_file, output_path, search, es_index, system_id, dataset_name, max_hits, run_official_AQWV, verbose):
@@ -335,7 +337,7 @@ def eval_AQWV(query_file, reference_file, output_path, search, es_index, system_
     #File to store search output
     SEARCH_OUT = os.path.join(output_path, "search_output.txt")
     f_out = open(SEARCH_OUT,'w')
-
+    
     #File to record queries with no hits
     NOHIT_OUT = os.path.join(output_path, "nohit_queries.txt")
     f_nohit = open(NOHIT_OUT,'w')
@@ -354,7 +356,8 @@ def eval_AQWV(query_file, reference_file, output_path, search, es_index, system_
     
     #Run query
     queries = get_queries(query_file)
-
+    res_list = []
+    
     if queries is None or len(queries) == 0:
         print ("\nInvalid or Bad Query File. Exiting Evaluation module\n")
         sys.exit
@@ -370,6 +373,12 @@ def eval_AQWV(query_file, reference_file, output_path, search, es_index, system_
             for each_doc in res['hits']['hits']:
                 f_out.write(str(q_num) + " " + "1" + " " + each_doc['_id'] + " " + "-1" + " " + str(each_doc['_score']) + " " + "STANDARD" + "\n")
 
+        if verbose >= 1:
+            # write search results output to json
+            res['hits']['query_parsed'] = queries[q_num]['parsed']
+            res['hits']['query_original'] = queries[q_num]['original']
+            res['hits']['query_id'] = str(q_num)
+            res_list.append(res['hits'])
         
         if run_official_AQWV:
         #Create a query file for this qID
@@ -381,6 +390,12 @@ def eval_AQWV(query_file, reference_file, output_path, search, es_index, system_
 
     f_out.close()
     f_nohit.close()
+
+    if verbose >= 1:
+        JSON_OUT = os.path.join(output_path, "search_output.json")
+        with open(JSON_OUT,'w', encoding='utf-8') as json_out:
+            json.dump(res_list, json_out, indent=2)
+            json_out.close()
     
     # special condition: if reference_file is the string 'NO_REFERENCE', don't run anything else.
     if reference_file != 'NO_REFERENCE':
