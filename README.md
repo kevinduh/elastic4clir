@@ -74,19 +74,23 @@ As a second example, suppose we are interested in evaluating the results of huma
 A note on the AQWV results: the Swahili-English Analysis1 human reference translations should give the following AQWV results:
 
 ```
-Oracle QWV: 0.3908
-AQWV for max_hits=15: 0.1526
-#queries evaluated: 150
+Total 0 docs created and 471 docs updated in index sw-en-analysis1
+Total returned hits from all 300 queries: 2390
+Oracle QWV:               0.3922
+AQWV for max_hits=15:      0.1562
+#queries evaluated:        150
 ```
 
-The Actual Query Weighted Value, evaluated at maximum 15 hits per query, is 0.1492. Since there is a threshold that needs to be tuned, for machine translation evaluation it is better to compare results on the Oracle Query Weighted Value (0.3879), which finds the optimal threshold (max_hits) on a per-query basis.
+The Actual Query Weighted Value, evaluated at maximum 15 hits per query, is 0.1562. Since there is a threshold that needs to be tuned, for machine translation evaluation it is better to compare results on the Oracle Query Weighted Value (0.3922), which finds the optimal threshold (max_hits) on a per-query basis.
 
 The Tagalog-English Analysis1 human reference results are:
 
 ```
-Oracle QWV:  0.6304
-AQWV for max_hits=15: 0.3352
-#queries evaluated:  125
+Total 0 docs created and 462 docs updated in index tl-en-analysis1
+Total returned hits from all 300 queries: 2987
+Oracle QWV:               0.6337
+AQWV for max_hits=15:      0.3349
+#queries evaluated:        125
 ```
 
 ### Running Experiments using different IR configurations
