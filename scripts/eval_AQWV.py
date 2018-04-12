@@ -353,10 +353,11 @@ def eval_AQWV(query_file, reference_file, output_path, search, es_index, system_
     es = Elasticsearch()
     r = es.search(index = es_index, body = {'size' : '0', 'query' : {}})
     N_total = int(r['hits']['total'])
-    
+
     #Run query
     queries = get_queries(query_file)
     res_list = []
+    returned_total = 0
     
     if queries is None or len(queries) == 0:
         print ("\nInvalid or Bad Query File. Exiting Evaluation module\n")
@@ -372,7 +373,8 @@ def eval_AQWV(query_file, reference_file, output_path, search, es_index, system_
             normalize_scores(res)
             for each_doc in res['hits']['hits']:
                 f_out.write(str(q_num) + " " + "1" + " " + each_doc['_id'] + " " + "-1" + " " + str(each_doc['_score']) + " " + "STANDARD" + "\n")
-
+                returned_total += 1
+                
         if verbose >= 1:
             # write search results output to json
             res['hits']['query_parsed'] = queries[q_num]['parsed']
@@ -390,7 +392,8 @@ def eval_AQWV(query_file, reference_file, output_path, search, es_index, system_
 
     f_out.close()
     f_nohit.close()
-
+    print("Total returned hits from all %d queries: %d" %(len(queries), returned_total))
+    
     if verbose >= 1:
         JSON_OUT = os.path.join(output_path, "search_output.json")
         with open(JSON_OUT,'w', encoding='utf-8') as json_out:
