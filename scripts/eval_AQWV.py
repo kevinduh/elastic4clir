@@ -19,7 +19,11 @@ MATERIAL_EVAL_PATH = '/export/corpora5/MATERIAL/tools/MATERIAL_tools-0.5.2/'
 #Hardcoding the conversion of domain names needed for the official NIST script
 domain_id2name = {
     'GOV':'Government-And-Politics',
-    'LIF':'Lifestyle'
+    'LIF':'Lifestyle',
+    'BUS':'Business-And-Commerce',
+    'LAW':'Law-And-Order',
+    'HEA':'Physical-And-Mental-Health',
+    'MIL':'Military'
 }
 
 #Checks all possible max_hits and finds the best AQWV overall
@@ -390,9 +394,11 @@ def eval_AQWV(query_file, reference_file, output_path, search, es_index, system_
                     f.write(each_doc['_id'] + '\t' + "{0:.3f}".format(each_doc['_score']) + '\n')
 
 
+    print("Total returned hits from all %d queries: %d" %(len(queries), returned_total))
+    f_nohit.write("# Total returned hits from all %d queries: %d\n" %(len(queries), returned_total))
     f_out.close()
     f_nohit.close()
-    print("Total returned hits from all %d queries: %d" %(len(queries), returned_total))
+
     
     if verbose >= 1:
         JSON_OUT = os.path.join(output_path, "search_output.json")
