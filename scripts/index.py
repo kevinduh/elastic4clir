@@ -48,8 +48,16 @@ def extract_text(filename):
 ########################
 # Setup ElasticSearch
 es = Elasticsearch()
+index_settings = '''{
+"settings" : {
+    "index" : {
+        "number_of_shards" : 1,
+        "number_of_replicas" : 1
+                }
+        }
+}'''
 if not es.indices.exists(index = docIndex):
-    es.indices.create(index = docIndex)
+    es.indices.create(index = docIndex, body = index_settings)
 
 mapping = '''{
   "properties": {
