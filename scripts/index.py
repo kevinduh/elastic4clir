@@ -38,7 +38,7 @@ def index_document(es, doc_id, doc_text):
 def extract_text(filename):
     '''Extract text from a file. Assumes we extract English text from final field'''
     text = []
-    with codecs.open(filename) as filename_fid:
+    with codecs.open(filename,'r','utf-8') as filename_fid:
         for line in filename_fid:
             english_text = line.split('\t')[-1]
             text.append(english_text)
