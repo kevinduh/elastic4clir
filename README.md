@@ -75,22 +75,36 @@ A note on the AQWV results: the Swahili-English Analysis1 human reference transl
 
 ```
 Total 0 docs created and 471 docs updated in index sw-en-analysis1
-Total returned hits from all 300 queries: 2390
-Oracle QWV:               0.3922
-AQWV for max_hits=15:      0.1562
+Total returned hits from all 300 queries: 1073
+Oracle QWV:               0.3440
+AQWV for max_hits=5:      0.2527
 #queries evaluated:        150
+...
+QWV (Query Weighted Value) = 0.55572059
+P_miss = 0.308880406667
+P_falseAlarm = 0.00677005333333
+speech,80,0.653750,0.004149,0.263266
+text,125,0.618724,0.007624,0.228787
+modifiedAQWV(to account for queries with no relevant documents),300,0.617761,0.006770,0.246838
 ```
 
-The Actual Query Weighted Value, evaluated at maximum 15 hits per query, is 0.1562. Since there is a threshold that needs to be tuned, for machine translation evaluation it is better to compare results on the Oracle Query Weighted Value (0.3922), which finds the optimal threshold (max_hits) on a per-query basis.
+The Actual Query Weighted Value, evaluated at maximum 5 hits per query, is 0.2527. This is the all-filt AQWV and should be the main metric for comparison. Other metrics are 0.5557 (all-unfilt), 0.263 (speech), 0.228 (text), 0.246 (modified). 
 
 The Tagalog-English Analysis1 human reference results are:
 
 ```
 Total 0 docs created and 462 docs updated in index tl-en-analysis1
-Total returned hits from all 300 queries: 2987
-Oracle QWV:               0.6337
-AQWV for max_hits=15:      0.3349
+Total returned hits from all 300 queries: 1227
+Oracle QWV:               0.5688
+AQWV for max_hits=5:      0.4478
 #queries evaluated:        125
+...
+QWV (Query Weighted Value) = 0.677400153333
+P_miss = 0.163785703333
+P_falseAlarm = 0.00794098666667
+speech,56,0.384141,0.006630,0.483256
+text,93,0.424014,0.008247,0.411049
+modifiedAQWV(to account for queries with no relevant documents),300,0.393086,0.007941,0.448095
 ```
 
 ### Running Experiments using different IR configurations
