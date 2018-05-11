@@ -374,7 +374,7 @@ def eval_AQWV(query_file, reference_file, output_path, search, es_index, system_
             f_out.write(str(q_num) + " " + "1 NO_HIT -1 1.0 STANDARD\n")
             f_nohit.write(str(q_num) + '\t' + queries[q_num]['parsed'] + '\n')
         else:
-            #normalize_scores(res)
+            normalize_scores(res)
             for each_doc in res['hits']['hits']:
                 f_out.write(str(q_num) + " " + "1" + " " + each_doc['_id'] + " " + "-1" + " " + str(each_doc['_score']) + " " + "STANDARD" + "\n")
                 returned_total += 1
